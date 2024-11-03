@@ -1,4 +1,6 @@
 pandas
 plotly
-streamlit  # or Flask, Dash, as needed
+streamlit  
 gunicorn
+Flask
+requests
