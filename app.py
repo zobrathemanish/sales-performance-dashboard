@@ -1,5 +1,6 @@
-from flask import Flask, request
+from flask import Flask, redirect, request
 import subprocess
+import os
 
 app = Flask(__name__)
 
@@ -9,12 +10,17 @@ streamlit_process = None
 @app.route('/')
 def start_streamlit():
     global streamlit_process
-    # Check if Streamlit is already running; if not, start it
+    # Get the Render-assigned port
+    port = os.environ.get("PORT", 8501)
+    
+    # Start Streamlit on the same port if it's not already running
     if streamlit_process is None or streamlit_process.poll() is not None:
         streamlit_process = subprocess.Popen(
-            ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.headless=true"]
+            ["streamlit", "run", "streamlit_app.py", "--server.port", str(port), "--server.headless=true"]
         )
-    return "Streamlit app is running!"
+    
+    # Redirect to the Streamlit app URL
+    return redirect(f"http://localhost:{port}")
 
 @app.route('/shutdown')
 def shutdown():
@@ -29,4 +35,4 @@ def shutdown():
     return "Server shutting down..."
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
