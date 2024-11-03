@@ -1,0 +1,4 @@
+pandas
+plotly
+streamlit  # or Flask, Dash, as needed
+gunicorn
